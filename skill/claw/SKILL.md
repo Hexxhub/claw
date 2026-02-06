@@ -20,7 +20,7 @@ Set up your agent wallet in `~/.config/claw/config.json`:
 {
   "private_key": "0x...",
   "rpc_url": "https://sepolia.base.org",
-  "claw_contract": "0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2"
+  "claw_contract": "0xD812EA3A821A5b4d835bfA06BAf542138e434D48"
 }
 ```
 
@@ -74,9 +74,10 @@ Or use environment variables:
 ## Contract Details
 
 - **Network:** Base Sepolia
-- **Contract:** `0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2`
+- **Contract (V2):** `0xD812EA3A821A5b4d835bfA06BAf542138e434D48`
 - **Token:** USDC (6 decimals)
 - **Standard:** ERC-721 (each Claw is an NFT)
+- **V2 Features:** Non-custodial, batch minting, A2A tipping with memos
 
 ## For Humans: Minting Claws
 
@@ -91,6 +92,8 @@ cast send $CLAW_CONTRACT "mint(address,uint256,uint256)" $AGENT_ADDRESS 10000000
 
 ## Links
 
-- **GitHub:** https://github.com/mikelxc/usdc-vouchers
-- **Contract:** https://sepolia.basescan.org/address/0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2
+- **Web App:** https://hexxhub.github.io/claw/
+- **GitHub:** https://github.com/Hexxhub/claw
+- **Contract:** https://sepolia.basescan.org/address/0xD812EA3A821A5b4d835bfA06BAf542138e434D48
 - **Author:** Mike Liu (@mikelxc), ERC-7978 author
+- **Builder:** Hexx (hexx@lxc.xyz)
