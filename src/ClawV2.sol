@@ -52,6 +52,14 @@ contract ClawV2 is ERC721Enumerable, ReentrancyGuard {
     event ClawRevoked(uint256 indexed tokenId, address indexed funder);
     
     event ClawLimitIncreased(uint256 indexed tokenId, uint256 newLimit);
+    
+    event ClawTipped(
+        uint256 indexed tokenId,
+        address indexed from,
+        address indexed to,
+        uint256 amount,
+        string message
+    );
 
     // ============ Errors ============
 
@@ -102,6 +110,41 @@ contract ClawV2 is ERC721Enumerable, ReentrancyGuard {
         _safeMint(agent, tokenId);
         
         emit ClawCreated(tokenId, msg.sender, agent, maxSpend, expiry);
+    }
+
+    /// @notice Batch create Claws - fund multiple agents in one tx
+    /// @dev Gas efficient for funding multiple agents with same params
+    /// @param agents Array of agent addresses to receive Claws
+    /// @param maxSpendEach Amount each agent can spend
+    /// @param expiry Expiry timestamp (0 = no expiry)
+    function createBatch(
+        address[] calldata agents,
+        uint256 maxSpendEach,
+        uint256 expiry
+    ) external returns (uint256[] memory tokenIds) {
+        if (maxSpendEach == 0) revert ZeroMaxSpend();
+        
+        uint256 totalRequired = maxSpendEach * agents.length;
+        uint256 allowance = usdc.allowance(msg.sender, address(this));
+        if (allowance < totalRequired) revert InsufficientAllowance();
+        
+        tokenIds = new uint256[](agents.length);
+        
+        for (uint256 i = 0; i < agents.length; i++) {
+            uint256 tokenId = _nextTokenId++;
+            tokenIds[i] = tokenId;
+            
+            claws[tokenId] = ClawData({
+                funder: msg.sender,
+                maxSpend: maxSpendEach,
+                spent: 0,
+                expiry: expiry,
+                revoked: false
+            });
+            
+            _safeMint(agents[i], tokenId);
+            emit ClawCreated(tokenId, msg.sender, agents[i], maxSpendEach, expiry);
+        }
     }
 
     /// @notice Revoke a Claw - immediately disable spending authority
@@ -155,6 +198,33 @@ contract ClawV2 is ERC721Enumerable, ReentrancyGuard {
         usdc.safeTransferFrom(c.funder, to, amount);
         
         emit ClawSpent(tokenId, c.funder, to, amount, remainingAmt);
+    }
+
+    /// @notice Tip another agent - A2A payment from your Claw
+    /// @dev Pulls from funder, sends to recipient agent's address
+    /// @param tokenId Your Claw to spend from
+    /// @param toAgent Recipient agent address
+    /// @param amount Tip amount (6 decimals)
+    /// @param message Optional on-chain message (emitted in event)
+    function tip(
+        uint256 tokenId,
+        address toAgent,
+        uint256 amount,
+        string calldata message
+    ) external nonReentrant {
+        if (amount == 0) revert ZeroAmount();
+        if (ownerOf(tokenId) != msg.sender) revert NotClawOwner();
+        
+        ClawData storage c = claws[tokenId];
+        if (c.revoked) revert ClawIsRevoked();
+        if (c.expiry != 0 && block.timestamp > c.expiry) revert ClawExpired();
+        if (c.spent + amount > c.maxSpend) revert SpendLimitExceeded();
+        
+        c.spent += amount;
+        
+        usdc.safeTransferFrom(c.funder, toAgent, amount);
+        
+        emit ClawTipped(tokenId, msg.sender, toAgent, amount, message);
     }
 
     // ============ View Functions ============

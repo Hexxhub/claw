@@ -132,6 +132,43 @@ contract ClawV2Test is Test {
         vm.stopPrank();
     }
     
+    function test_BatchCreate() public {
+        address[] memory agents = new address[](3);
+        agents[0] = makeAddr("agent1");
+        agents[1] = makeAddr("agent2");
+        agents[2] = makeAddr("agent3");
+        
+        vm.startPrank(funder);
+        usdc.approve(address(claw), 300e6); // 100 each
+        
+        uint256[] memory tokenIds = claw.createBatch(agents, 100e6, 0);
+        vm.stopPrank();
+        
+        assertEq(tokenIds.length, 3);
+        assertEq(claw.ownerOf(tokenIds[0]), agents[0]);
+        assertEq(claw.ownerOf(tokenIds[1]), agents[1]);
+        assertEq(claw.ownerOf(tokenIds[2]), agents[2]);
+        assertEq(claw.getRemaining(tokenIds[0]), 100e6);
+    }
+
+    function test_TipAnotherAgent() public {
+        address agent2 = makeAddr("agent2");
+        
+        // Setup: create claw for agent
+        vm.startPrank(funder);
+        usdc.approve(address(claw), 100e6);
+        uint256 tokenId = claw.create(agent, 100e6, 0);
+        vm.stopPrank();
+        
+        // Agent tips agent2
+        vm.prank(agent);
+        claw.tip(tokenId, agent2, 5e6, "thanks for the help!");
+        
+        // Verify
+        assertEq(usdc.balanceOf(agent2), 5e6);
+        assertEq(claw.getRemaining(tokenId), 95e6);
+    }
+
     function test_ClawIsTradeable() public {
         vm.startPrank(funder);
         usdc.approve(address(claw), 100e6);
