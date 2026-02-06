@@ -41,7 +41,7 @@ contract ClawV2Test is Test {
         
         // Agent spends
         vm.startPrank(agent);
-        claw.spend(tokenId, merchant, 30e6);
+        claw.spend(tokenId, merchant, 30e6, "");
         vm.stopPrank();
         
         // Verify
@@ -62,7 +62,7 @@ contract ClawV2Test is Test {
         // Agent can't spend
         vm.startPrank(agent);
         vm.expectRevert(ClawV2.ClawIsRevoked.selector);
-        claw.spend(tokenId, merchant, 10e6);
+        claw.spend(tokenId, merchant, 10e6, "");
         vm.stopPrank();
     }
     
@@ -78,7 +78,7 @@ contract ClawV2Test is Test {
         
         // Agent spends, funds pulled directly from funder
         vm.prank(agent);
-        claw.spend(tokenId, merchant, 25e6);
+        claw.spend(tokenId, merchant, 25e6, "");
         
         assertEq(usdc.balanceOf(funder), 975e6);
         assertEq(usdc.balanceOf(address(claw)), 0); // Still 0!
@@ -98,11 +98,11 @@ contract ClawV2Test is Test {
         
         // Agent can only spend up to allowance
         vm.startPrank(agent);
-        claw.spend(tokenId, merchant, 50e6);
+        claw.spend(tokenId, merchant, 50e6, "");
         
         // This should fail - no more allowance
         vm.expectRevert(); // SafeERC20 will revert
-        claw.spend(tokenId, merchant, 10e6);
+        claw.spend(tokenId, merchant, 10e6, "");
         vm.stopPrank();
     }
     
@@ -114,7 +114,7 @@ contract ClawV2Test is Test {
         
         vm.startPrank(agent);
         vm.expectRevert(ClawV2.SpendLimitExceeded.selector);
-        claw.spend(tokenId, merchant, 101e6);
+        claw.spend(tokenId, merchant, 101e6, "");
         vm.stopPrank();
     }
     
@@ -128,7 +128,7 @@ contract ClawV2Test is Test {
         address rando = makeAddr("rando");
         vm.startPrank(rando);
         vm.expectRevert(ClawV2.NotClawOwner.selector);
-        claw.spend(tokenId, merchant, 10e6);
+        claw.spend(tokenId, merchant, 10e6, "");
         vm.stopPrank();
     }
     
@@ -184,7 +184,7 @@ contract ClawV2Test is Test {
         
         // New agent can spend
         vm.prank(newAgent);
-        claw.spend(tokenId, merchant, 20e6);
+        claw.spend(tokenId, merchant, 20e6, "");
         
         assertEq(usdc.balanceOf(merchant), 20e6);
     }

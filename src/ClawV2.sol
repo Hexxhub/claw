@@ -46,7 +46,8 @@ contract ClawV2 is ERC721Enumerable, ReentrancyGuard {
         address indexed from,
         address indexed to,
         uint256 amount,
-        uint256 remaining
+        uint256 remaining,
+        string memo
     );
 
     event ClawRevoked(uint256 indexed tokenId, address indexed funder);
@@ -178,10 +179,12 @@ contract ClawV2 is ERC721Enumerable, ReentrancyGuard {
     /// @param tokenId The Claw to spend from
     /// @param to Recipient of USDC
     /// @param amount Amount to spend (6 decimals)
+    /// @param memo Optional reason for spend (for audit trail)
     function spend(
         uint256 tokenId,
         address to,
-        uint256 amount
+        uint256 amount,
+        string calldata memo
     ) external nonReentrant {
         if (amount == 0) revert ZeroAmount();
         if (ownerOf(tokenId) != msg.sender) revert NotClawOwner();
@@ -197,7 +200,7 @@ contract ClawV2 is ERC721Enumerable, ReentrancyGuard {
         // Pull from funder's wallet, send to recipient
         usdc.safeTransferFrom(c.funder, to, amount);
         
-        emit ClawSpent(tokenId, c.funder, to, amount, remainingAmt);
+        emit ClawSpent(tokenId, c.funder, to, amount, remainingAmt, memo);
     }
 
     /// @notice Tip another agent - A2A payment from your Claw
