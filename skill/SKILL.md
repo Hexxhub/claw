@@ -1,129 +1,148 @@
-# USDC Vouchers Skill
+# Claw — Tradeable Spending Authority for AI Agents
 
-One-time USDC spending vouchers for AI agents. Create disposable spending tickets with caps, expiries, and on-chain tracking.
+NFT-based bounded wallets: humans fund, agents spend within limits, unused returns.
 
-## Prerequisites
+Based on [ERC-7978](https://eip.tools/eip/7978) (Non-Fungible Account Tokens).
 
-- Base Sepolia testnet access
-- USDC on Base Sepolia (get from [Circle Faucet](https://faucet.circle.com/))
-- A funded wallet for gas
+## Quick Start
 
-## Contract
-
-**Network:** Base Sepolia (Chain ID: 84532)  
-**VoucherFactory:** `0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2`  
-**USDC:** `0x036CbD53842c5426634e7929541eC2318f3dCF7e`
-**Explorer:** [BaseScan](https://sepolia.basescan.org/address/0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2)
-
-## Usage
-
-### Create a Voucher
-
-To create a voucher for an agent:
-
+**If you're an agent and someone sent you a Claw:**
 ```bash
-# 1. Approve USDC spending
-cast send 0x036CbD53842c5426634e7929541eC2318f3dCF7e \
-  "approve(address,uint256)" \
-  0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2 \
-  100000000 \
-  --rpc-url https://sepolia.base.org \
-  --private-key $PRIVATE_KEY
+# Check your balance
+cast call $CLAW "getRemaining(uint256)" $TOKEN_ID --rpc-url https://sepolia.base.org
 
-# 2. Mint voucher (100 USDC, no expiry)
-cast send 0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2 \
-  "mint(address,uint256,uint256)" \
-  [AGENT_ADDRESS] \
-  100000000 \
-  0 \
-  --rpc-url https://sepolia.base.org \
-  --private-key $PRIVATE_KEY
+# Spend from your Claw
+cast send $CLAW "spend(uint256,address,uint256)" $TOKEN_ID $RECIPIENT $AMOUNT \
+  --rpc-url https://sepolia.base.org --private-key $YOUR_KEY
+
+# When done, burn to return unused funds to the funder
+cast send $CLAW "burn(uint256)" $TOKEN_ID \
+  --rpc-url https://sepolia.base.org --private-key $YOUR_KEY
 ```
 
-### Spend from Voucher (Agent)
+## Contracts
+
+| Contract | Address | Network |
+|----------|---------|---------|
+| **Claw** (v2, on-chain SVG) | `0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2` | Base Sepolia |
+| VoucherFactory (v1) | `0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2` | Base Sepolia |
+| USDC | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | Base Sepolia |
+
+**Explorer:** [Claw on BaseScan](https://sepolia.basescan.org/address/0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2)
+
+## For Humans: Funding an Agent
 
 ```bash
-# Spend 30 USDC to a recipient
-cast send 0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2 \
-  "spend(uint256,address,uint256)" \
-  [TOKEN_ID] \
-  [RECIPIENT_ADDRESS] \
-  30000000 \
-  --rpc-url https://sepolia.base.org \
-  --private-key $AGENT_PRIVATE_KEY
+CLAW=0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2
+USDC=0x036CbD53842c5426634e7929541eC2318f3dCF7e
+AMOUNT=50000000  # 50 USDC (6 decimals)
+AGENT=0x...      # Agent's address
+EXPIRY=0         # No expiry (or Unix timestamp)
+
+# 1. Approve USDC
+cast send $USDC "approve(address,uint256)" $CLAW $AMOUNT \
+  --rpc-url https://sepolia.base.org --private-key $YOUR_KEY
+
+# 2. Mint Claw to agent
+cast send $CLAW "mint(address,uint256,uint256)" $AGENT $AMOUNT $EXPIRY \
+  --rpc-url https://sepolia.base.org --private-key $YOUR_KEY
 ```
 
-### Check Voucher Status
+## For Agents: Using Your Claw
 
+### Check Status
 ```bash
 # Get remaining balance
-cast call 0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2 \
-  "getRemaining(uint256)" \
-  [TOKEN_ID] \
-  --rpc-url https://sepolia.base.org
+cast call $CLAW "getRemaining(uint256)(uint256)" $TOKEN_ID --rpc-url https://sepolia.base.org
 
-# Get full voucher details
-cast call 0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2 \
-  "getVoucher(uint256)" \
-  [TOKEN_ID] \
-  --rpc-url https://sepolia.base.org
+# Get full details (maxSpend, spent, remaining, expiry, funder, burned, expired)
+cast call $CLAW "getClaw(uint256)" $TOKEN_ID --rpc-url https://sepolia.base.org
+
+# Check if still valid
+cast call $CLAW "isValid(uint256)(bool)" $TOKEN_ID --rpc-url https://sepolia.base.org
 ```
 
-### Burn Voucher
-
+### Spend
 ```bash
-# Burn and return remaining USDC
-cast send 0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2 \
-  "burn(uint256,address)" \
-  [TOKEN_ID] \
-  [RETURN_TO_ADDRESS] \
-  --rpc-url https://sepolia.base.org \
-  --private-key $AGENT_PRIVATE_KEY
+# Spend 10 USDC to a recipient
+cast send $CLAW "spend(uint256,address,uint256)" $TOKEN_ID $RECIPIENT 10000000 \
+  --rpc-url https://sepolia.base.org --private-key $YOUR_KEY
 ```
 
-## JavaScript/ethers.js Example
+### Burn (Return Unused Funds)
+```bash
+# Burns the NFT, returns remaining USDC to the original funder
+cast send $CLAW "burn(uint256)" $TOKEN_ID \
+  --rpc-url https://sepolia.base.org --private-key $YOUR_KEY
+```
+
+## JavaScript/ethers.js
 
 ```javascript
 const { ethers } = require('ethers');
 
-const FACTORY_ABI = [
+const CLAW_ADDRESS = '0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2';
+const CLAW_ABI = [
   "function mint(address,uint256,uint256) returns (uint256)",
   "function spend(uint256,address,uint256)",
-  "function burn(uint256,address)",
+  "function burn(uint256)",
   "function getRemaining(uint256) view returns (uint256)",
-  "function getVoucher(uint256) view returns (uint256,uint256,uint256,bool)",
+  "function getClaw(uint256) view returns (uint256,uint256,uint256,uint256,address,bool,bool)",
+  "function isValid(uint256) view returns (bool)",
   "function ownerOf(uint256) view returns (address)",
-  "event VoucherSpent(uint256 indexed tokenId, address indexed to, uint256 amount, uint256 totalSpent, uint256 remaining)"
+  "function tokenURI(uint256) view returns (string)",
+  "event ClawMinted(uint256 indexed tokenId, address indexed funder, address indexed recipient, uint256 maxSpend, uint256 expiry)",
+  "event ClawSpent(uint256 indexed tokenId, address indexed to, uint256 amount, uint256 remaining)",
+  "event ClawBurned(uint256 indexed tokenId, address indexed returnTo, uint256 amountReturned)"
 ];
 
-async function spendFromVoucher(factory, tokenId, recipient, amount) {
-  const tx = await factory.spend(tokenId, recipient, amount);
-  const receipt = await tx.wait();
-  console.log(`Spent ${amount / 1e6} USDC, tx: ${receipt.hash}`);
-  return receipt;
+async function getClawStatus(provider, tokenId) {
+  const claw = new ethers.Contract(CLAW_ADDRESS, CLAW_ABI, provider);
+  const remaining = await claw.getRemaining(tokenId);
+  const valid = await claw.isValid(tokenId);
+  return { remaining: remaining.toString(), valid };
 }
 ```
 
-## Agent Integration Pattern
+## Integration Pattern
 
-1. **Human creates voucher** → Agent receives NFT
-2. **Agent checks balance** → `getRemaining(tokenId)`
-3. **Agent spends** → `spend(tokenId, recipient, amount)`
-4. **Agent completes task** → `burn(tokenId, returnAddress)` or let human reclaim
+```
+Human                              Agent
+  │                                  │
+  │ 1. mint(agent, 100 USDC, expiry) │
+  │ ─────────────────────────────────>
+  │        [Claw NFT → agent]        │
+  │                                  │
+  │              spend(tokenId, to, 30) 
+  │ <─────────────────────────────────
+  │       [30 USDC → recipient]      │
+  │                                  │
+  │              burn(tokenId)       │
+  │ <─────────────────────────────────
+  │  [70 USDC → original funder]     │
+```
 
-## Error Handling
+## Errors
 
 | Error | Meaning |
 |-------|---------|
-| `SpendLimitExceeded` | Trying to spend more than remaining |
-| `VoucherExpired` | Voucher past its expiry time |
-| `NotVoucherOwner` | Caller doesn't own the voucher NFT |
-| `VoucherAlreadyBurned` | Voucher was already burned |
+| `SpendLimitExceeded` | Amount > remaining balance |
+| `ClawExpired` | Past expiry timestamp |
+| `NotClawOwner` | You don't own this Claw NFT |
+| `ClawAlreadyBurned` | Already burned |
 
-## Events
+## On-Chain Metadata
 
-Monitor these events for tracking:
+Each Claw has an SVG rendered on-chain showing:
+- Current balance
+- Progress bar (% spent)
+- Status (Active/Expired/Burned)
+- Expiry info
 
-- `VoucherCreated(tokenId, recipient, maxSpend, expiry)`
-- `VoucherSpent(tokenId, to, amount, totalSpent, remaining)`
-- `VoucherBurned(tokenId, returnTo, amountReturned)`
+View it: `cast call $CLAW "tokenURI(uint256)" $TOKEN_ID --rpc-url https://sepolia.base.org`
+
+## Links
+
+- **GitHub:** https://github.com/mikelxc/usdc-vouchers
+- **ERC-7978:** https://eip.tools/eip/7978
+- **Author:** Hexx 🦞 (agent) + Mike @mikelxc (human, ERC-7978 author)
