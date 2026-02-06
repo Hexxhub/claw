@@ -102,15 +102,25 @@ interface IVoucherFactory {
 }
 ```
 
+## Live Demo
+
+🌐 **Web App:** [hexxhub.github.io/claw](https://hexxhub.github.io/claw/)
+
 ## Deployed Contracts
 
 | Contract | Address | Explorer |
 |----------|---------|----------|
-| **Claw** (v2 - with on-chain SVG) | `0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2` | [BaseScan](https://sepolia.basescan.org/address/0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2) |
-| VoucherFactory (v1) | `0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2` | [BaseScan](https://sepolia.basescan.org/address/0x4c69CD2b2AC640C5b9eBfcA38Ab18176013515f2) |
+| **Claw V2** (current) | `0xD812EA3A821A5b4d835bfA06BAf542138e434D48` | [BaseScan](https://sepolia.basescan.org/address/0xD812EA3A821A5b4d835bfA06BAf542138e434D48) |
+| Claw V1 | `0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2` | [BaseScan](https://sepolia.basescan.org/address/0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2) |
 
 **Network:** Base Sepolia (84532)  
 **USDC:** `0x036CbD53842c5426634e7929541eC2318f3dCF7e`
+
+### V2 Features
+- **Non-custodial:** USDC stays in funder's wallet until spent (via `transferFrom`)
+- **Batch minting:** Create multiple Claws in one transaction
+- **A2A tipping:** Agents can tip other agents with on-chain memos
+- **Spend memos:** Track what each payment was for
 
 ## Proof of Work
 
@@ -198,19 +208,24 @@ While a full ERC-7978 implementation would deploy individual wallets per voucher
 
 Future versions could use full ERC-7978 with ERC-7579 modular wallets for more complex spending policies (merchant whitelists, time-based limits, multi-sig requirements).
 
-## OpenClaw Skill
+## OpenClaw Skill (For Agents)
 
-This project includes an OpenClaw skill for agent integration:
+Agents can spend from their Claws using the included skill:
 
 ```bash
 # Install the skill
-clawhub install usdc-vouchers
-
-# Or add manually
-cp -r skill/ ~/.openclaw/skills/usdc-vouchers/
+git clone https://github.com/Hexxhub/claw
+cp -r claw/skill/claw ~/.openclaw/workspace/skills/
 ```
 
-See `skill/SKILL.md` for usage instructions.
+**Commands:**
+```bash
+claw balance              # Check remaining USDC
+claw spend <to> <amount>  # Send USDC to recipient
+claw tip <id> <to> <amt>  # Tip another agent
+```
+
+See `skill/claw/SKILL.md` for full documentation.
 
 ## Security Considerations
 
@@ -226,8 +241,13 @@ MIT
 
 ## Author
 
-Built by Bot 🤖 for the Circle USDC Hackathon on Moltbook.
+Built by [Hexx](https://moltbook.com/u/Hexx) 🦞 for [Mike Liu](https://x.com/mikelxc), author of [ERC-7978](https://eip.tools/eip/7978).
+
+**Links:**
+- [GitHub (Hexxhub)](https://github.com/Hexxhub/claw)
+- [Hackathon Submission](https://moltbook.com/m/usdc/post/e567e6cd-8eb0-44c9-b321-284980c44bb9)
+- [Roadmap](./ROADMAP.md)
 
 ---
 
-*Giving agents money doesn't have to mean giving them everything.*
+*"In an age we cannot trust, we need proof." — Giving agents money doesn't have to mean giving them everything.*
