@@ -40,7 +40,7 @@ function App() {
         <p className="mt-1">
           <a href="https://github.com/mikelxc/usdc-vouchers" className="hover:text-white">GitHub</a>
           {' • '}
-          <a href="https://sepolia.basescan.org/address/0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2" className="hover:text-white">Contract</a>
+          <a href="https://sepolia.basescan.org/address/0xD812EA3A821A5b4d835bfA06BAf542138e434D48" className="hover:text-white">Contract</a>
           {' • '}
           Base Sepolia
         </p>

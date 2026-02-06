@@ -1,4 +1,4 @@
-export const CLAW_ADDRESS = '0x1e9Bc36Ec1beA19FD8959D496216116a8Fe76bA2' as const
+export const CLAW_ADDRESS = '0xD812EA3A821A5b4d835bfA06BAf542138e434D48' as const
 export const USDC_ADDRESS = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const // Base Sepolia USDC
 
 export const CLAW_ABI = [
