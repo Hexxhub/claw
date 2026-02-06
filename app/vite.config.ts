@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/usdc-vouchers/',
+  base: '/claw/',
   define: {
     global: 'globalThis',
   },

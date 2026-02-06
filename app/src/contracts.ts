@@ -3,15 +3,26 @@ export const USDC_ADDRESS = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as cons
 
 export const CLAW_ABI = [
   {
-    name: 'mint',
+    name: 'create',
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [
-      { name: 'recipient', type: 'address' },
+      { name: 'agent', type: 'address' },
       { name: 'maxSpend', type: 'uint256' },
       { name: 'expiry', type: 'uint256' },
     ],
     outputs: [{ name: 'tokenId', type: 'uint256' }],
+  },
+  {
+    name: 'createBatch',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'agents', type: 'address[]' },
+      { name: 'maxSpendEach', type: 'uint256' },
+      { name: 'expiry', type: 'uint256' },
+    ],
+    outputs: [{ name: 'tokenIds', type: 'uint256[]' }],
   },
   {
     name: 'spend',
@@ -25,7 +36,19 @@ export const CLAW_ABI = [
     outputs: [],
   },
   {
-    name: 'burn',
+    name: 'tip',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'tokenId', type: 'uint256' },
+      { name: 'toAgent', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+      { name: 'message', type: 'string' },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'revoke',
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [{ name: 'tokenId', type: 'uint256' }],
@@ -37,12 +60,26 @@ export const CLAW_ABI = [
     stateMutability: 'view',
     inputs: [{ name: 'tokenId', type: 'uint256' }],
     outputs: [
+      { name: 'funder', type: 'address' },
       { name: 'maxSpend', type: 'uint256' },
       { name: 'spent', type: 'uint256' },
       { name: 'expiry', type: 'uint256' },
-      { name: 'funder', type: 'address' },
-      { name: 'burned', type: 'bool' },
+      { name: 'revoked', type: 'bool' },
     ],
+  },
+  {
+    name: 'getRemaining',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ type: 'uint256' }],
+  },
+  {
+    name: 'isActive',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ type: 'bool' }],
   },
   {
     name: 'balanceOf',
