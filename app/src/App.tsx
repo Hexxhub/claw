@@ -12,59 +12,59 @@ function App() {
     <div className="min-h-screen">
       {/* Hero */}
       <div className="bg-gradient-to-b from-red-950/30 to-transparent pt-8 pb-16">
-        <header className="max-w-5xl mx-auto px-6 flex justify-between items-center mb-12">
-          <div className="flex items-center gap-3">
-            <span className="text-5xl">🦞</span>
+        <header className="max-w-5xl mx-auto px-4 sm:px-6 flex justify-between items-center mb-8 sm:mb-12">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-4xl sm:text-5xl">🦞</span>
             <div>
-              <h1 className="text-3xl font-bold">Claw</h1>
-              <p className="text-gray-400 text-sm">Bounded Spending for AI Agents</p>
+              <h1 className="text-2xl sm:text-3xl font-bold">Claw</h1>
+              <p className="text-gray-400 text-xs sm:text-sm hidden sm:block">Bounded Spending for AI Agents</p>
             </div>
           </div>
           <ConnectKitButton />
         </header>
 
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-4">Give agents money.<br/><span className="text-red-500">Not your keys.</span></h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-4xl font-bold mb-4">Give agents money.<br/><span className="text-red-500">Not your keys.</span></h2>
+          <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto mb-6 sm:mb-8">
             Claws are NFT-based spending vouchers. Fund them with USDC, set a limit, and let agents spend autonomously. Unused funds return to you.
           </p>
-          <div className="flex justify-center gap-4 text-sm">
-            <div className="bg-gray-800/50 rounded-lg px-4 py-2">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 text-sm">
+            <div className="bg-gray-800/50 rounded-lg px-3 sm:px-4 py-2">
               <span className="text-red-500 font-bold">On-chain limits</span>
-              <span className="text-gray-400 ml-2">Can't be bypassed</span>
+              <span className="text-gray-400 ml-1 sm:ml-2 hidden sm:inline">Can't be bypassed</span>
             </div>
-            <div className="bg-gray-800/50 rounded-lg px-4 py-2">
+            <div className="bg-gray-800/50 rounded-lg px-3 sm:px-4 py-2">
               <span className="text-red-500 font-bold">Recoverable</span>
-              <span className="text-gray-400 ml-2">Burn to get unused USDC back</span>
+              <span className="text-gray-400 ml-1 sm:ml-2 hidden sm:inline">Burn to get unused USDC back</span>
             </div>
-            <div className="bg-gray-800/50 rounded-lg px-4 py-2">
+            <div className="bg-gray-800/50 rounded-lg px-3 sm:px-4 py-2">
               <span className="text-red-500 font-bold">Tradeable</span>
-              <span className="text-gray-400 ml-2">Standard ERC-721</span>
+              <span className="text-gray-400 ml-1 sm:ml-2 hidden sm:inline">Standard ERC-721</span>
             </div>
           </div>
         </div>
       </div>
 
-      <main className="max-w-5xl mx-auto px-6 -mt-8">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 -mt-8">
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           <button 
             onClick={() => setActiveTab('mint')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'mint' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base ${activeTab === 'mint' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
           >
-            ➕ Mint Claws
+            ➕ Mint
           </button>
           <button 
             onClick={() => setActiveTab('claws')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'claws' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base ${activeTab === 'claws' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
           >
-            🦞 Your Claws
+            🦞 Claws
           </button>
           <button 
             onClick={() => setActiveTab('agents')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'agents' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base ${activeTab === 'agents' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
           >
-            🤖 For Agents
+            🤖 Agents
           </button>
         </div>
 
@@ -83,7 +83,7 @@ function App() {
         )}
       </main>
 
-      <footer className="max-w-5xl mx-auto px-6 mt-16 py-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+      <footer className="max-w-5xl mx-auto px-4 sm:px-6 mt-16 py-8 border-t border-gray-800 text-center text-gray-500 text-sm">
         <p>Built by <a href="https://moltbook.com/u/Hexx" className="text-red-500 hover:underline">Hexx</a> for the USDC Hackathon</p>
         <p className="mt-2">
           <a href="https://github.com/Hexxhub/claw" className="hover:text-white">GitHub</a>
@@ -386,6 +386,9 @@ function MyClaws({ address }: { address: string }) {
 }
 
 function ClawCard({ owner, index }: { owner: string; index: number }) {
+  const { address } = useAccount()
+  const [showBurn, setShowBurn] = useState(false)
+  
   const { data: tokenId } = useReadContract({
     address: CLAW_ADDRESS,
     abi: CLAW_ABI,
@@ -393,12 +396,15 @@ function ClawCard({ owner, index }: { owner: string; index: number }) {
     args: [owner as `0x${string}`, BigInt(index)],
   })
 
-  const { data: clawData } = useReadContract({
+  const { data: clawData, refetch } = useReadContract({
     address: CLAW_ADDRESS,
     abi: CLAW_ABI,
     functionName: 'claws',
     args: tokenId ? [tokenId] : undefined,
   })
+
+  const { writeContract: burn, data: burnHash } = useWriteContract()
+  const { isLoading: isBurning, isSuccess: burned } = useWaitForTransactionReceipt({ hash: burnHash })
 
   if (!clawData) return <div className="bg-gray-800 rounded-xl p-4 animate-pulse h-32" />
 
@@ -406,13 +412,44 @@ function ClawCard({ owner, index }: { owner: string; index: number }) {
   const remaining = maxSpend - spent
   const percentUsed = Number(spent) / Number(maxSpend) * 100
   const isExpired = expiry > 0 && Date.now() / 1000 > Number(expiry)
+  const isFunder = address?.toLowerCase() === funder.toLowerCase()
+
+  const handleBurn = () => {
+    if (!tokenId) return
+    burn({
+      address: CLAW_ADDRESS,
+      abi: CLAW_ABI,
+      functionName: 'burn',
+      args: [tokenId],
+    })
+  }
+
+  if (burned) {
+    return (
+      <div className="bg-gray-800 rounded-xl p-4 border border-green-600/50 text-center">
+        <div className="text-4xl mb-2">🔥</div>
+        <p className="font-semibold text-green-400">Claw #{tokenId?.toString()} Burned!</p>
+        <p className="text-sm text-gray-400">${formatUnits(remaining, 6)} USDC returned</p>
+      </div>
+    )
+  }
 
   return (
-    <div className={`bg-gray-800 rounded-xl p-4 border ${isExpired ? 'border-yellow-600/50' : 'border-gray-700'}`}>
+    <div className={`bg-gray-800 rounded-xl p-4 border ${isExpired ? 'border-yellow-600/50' : revoked ? 'border-red-600/50' : 'border-gray-700'}`}>
       <div className="flex justify-between items-start mb-3">
         <div>
-          <span className="font-mono text-lg font-bold">Claw #{tokenId?.toString()}</span>
-          {isExpired && <span className="ml-2 text-xs bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded">Expired</span>}
+          <a 
+            href={`https://sepolia.basescan.org/token/${CLAW_ADDRESS}?a=${tokenId}`}
+            target="_blank"
+            className="font-mono text-lg font-bold hover:text-red-400 transition"
+          >
+            Claw #{tokenId?.toString()} ↗
+          </a>
+          <div className="flex gap-1 mt-1">
+            {isExpired && <span className="text-xs bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded">Expired</span>}
+            {revoked && <span className="text-xs bg-red-600/20 text-red-500 px-2 py-0.5 rounded">Revoked</span>}
+            {isFunder && <span className="text-xs bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded">You funded</span>}
+          </div>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-green-400">${formatUnits(remaining, 6)}</p>
@@ -423,7 +460,7 @@ function ClawCard({ owner, index }: { owner: string; index: number }) {
       <div className="w-full bg-gray-700 rounded-full h-2 mb-3">
         <div 
           className="bg-gradient-to-r from-red-600 to-red-500 h-2 rounded-full transition-all" 
-          style={{ width: `${percentUsed}%` }}
+          style={{ width: `${Math.min(percentUsed, 100)}%` }}
         />
       </div>
       
@@ -438,6 +475,39 @@ function ClawCard({ owner, index }: { owner: string; index: number }) {
           <p>Expires: {new Date(Number(expiry) * 1000).toLocaleString()}</p>
         )}
       </div>
+
+      {/* Actions */}
+      {isFunder && remaining > 0 && !revoked && (
+        <div className="mt-3 pt-3 border-t border-gray-700">
+          {showBurn ? (
+            <div className="space-y-2">
+              <p className="text-xs text-yellow-400">⚠️ Burn to recover ${formatUnits(remaining, 6)} USDC</p>
+              <div className="flex gap-2">
+                <button 
+                  onClick={handleBurn}
+                  disabled={isBurning}
+                  className="btn btn-primary text-xs py-1 px-3 flex-1"
+                >
+                  {isBurning ? '⏳ Burning...' : '🔥 Confirm Burn'}
+                </button>
+                <button 
+                  onClick={() => setShowBurn(false)}
+                  className="btn btn-secondary text-xs py-1 px-3"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setShowBurn(true)}
+              className="text-xs text-gray-400 hover:text-red-400 transition"
+            >
+              🔥 Burn & Recover Funds
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }
