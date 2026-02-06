@@ -100,25 +100,43 @@ function App() {
 }
 
 function MintSection() {
+  const { address } = useAccount()
   const [mode, setMode] = useState<'single' | 'batch'>('single')
+  
+  const { data: usdcBalance } = useReadContract({
+    address: USDC_ADDRESS,
+    abi: USDC_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+  })
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
         <div className="card">
-          <div className="flex gap-2 mb-4">
-            <button 
-              onClick={() => setMode('single')}
-              className={`px-3 py-1 rounded text-sm ${mode === 'single' ? 'bg-gray-700' : 'text-gray-400'}`}
-            >
-              Single Mint
-            </button>
-            <button 
-              onClick={() => setMode('batch')}
-              className={`px-3 py-1 rounded text-sm ${mode === 'batch' ? 'bg-gray-700' : 'text-gray-400'}`}
-            >
-              Batch Mint
-            </button>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setMode('single')}
+                className={`px-3 py-1 rounded text-sm ${mode === 'single' ? 'bg-gray-700' : 'text-gray-400'}`}
+              >
+                Single Mint
+              </button>
+              <button 
+                onClick={() => setMode('batch')}
+                className={`px-3 py-1 rounded text-sm ${mode === 'batch' ? 'bg-gray-700' : 'text-gray-400'}`}
+              >
+                Batch Mint
+              </button>
+            </div>
+            {usdcBalance !== undefined && (
+              <div className="text-sm">
+                <span className="text-gray-400">Balance: </span>
+                <span className={Number(formatUnits(usdcBalance, 6)) > 0 ? 'text-green-400' : 'text-yellow-400'}>
+                  ${formatUnits(usdcBalance, 6)} USDC
+                </span>
+              </div>
+            )}
           </div>
           
           {mode === 'single' ? <MintClaw /> : <BatchMint />}
